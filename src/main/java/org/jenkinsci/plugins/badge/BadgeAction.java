@@ -36,6 +36,7 @@ public class BadgeAction implements Action {
      * Serves the badge image.
      */
     public HttpResponse doIcon(@QueryParameter String style) {
+    	System.out.println("BadgeAction:: doIcon...");
         return factory.getImage(project.getIconColor(), style);
     }
 
