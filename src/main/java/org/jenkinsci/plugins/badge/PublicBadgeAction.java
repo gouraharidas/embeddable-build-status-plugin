@@ -65,9 +65,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Dominik Bartholdi (imod)
  */
 @Extension
-public class PublicBadgeAction implements UnprotectedRootAction {
-
-    public final static Permission VIEW_STATUS = new Permission(Item.PERMISSIONS, "ViewStatus", Messages._ViewStatus_Permission(), Item.READ, PermissionScope.ITEM);
+public class PublicBadgeAction extends AbstractBadgeAction implements UnprotectedRootAction {
 
     private final ImageResolver iconResolver;
 
@@ -91,6 +89,7 @@ public class PublicBadgeAction implements UnprotectedRootAction {
      * Serves the badge image.
      */
     public HttpResponse doIcon(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job, @QueryParameter String build, @QueryParameter String style) {
+    	System.out.println("PublicBadgeAction:: doIcon...");
         if(build != null) {
             Run run = getRun(job, build);
             return iconResolver.getImage(run.getIconColor(), style);
@@ -113,41 +112,4 @@ public class PublicBadgeAction implements UnprotectedRootAction {
         }
     }
 
-    private Job<?, ?> getProject(String job) {
-        Job<?, ?> p;
-
-        // as the user might have ViewStatus permission only (e.g. as anonymous) we get get the project impersonate and check for permission after getting the project
-        SecurityContext orig = ACL.impersonate(ACL.SYSTEM);
-        try {
-            p = Jenkins.getInstance().getItemByFullName(job, Job.class);
-        } finally {
-            SecurityContextHolder.setContext(orig);
-        }
-
-        // check if user has permission to view the status
-        if(p == null || !(p.hasPermission(VIEW_STATUS))){
-            throw HttpResponses.notFound();            
-        }
-        
-        return p;
-    }
-
-    private Run<?, ?> getRun(String job, String build) {
-        Run<?, ?> run;
-
-        // as the user might have ViewStatus permission only (e.g. as anonymous) we get get the project impersonate and check for permission after getting the project
-        SecurityContext orig = ACL.impersonate(ACL.SYSTEM);
-        try {
-            run = Jenkins.getInstance().getItemByFullName(job, Job.class).getBuildByNumber(Integer.parseInt(build));
-        } finally {
-            SecurityContextHolder.setContext(orig);
-        }
-
-        // check if user has permission to view the status
-        if(run == null || !(run.hasPermission(VIEW_STATUS))){
-            throw HttpResponses.notFound();
-        }
-
-        return run;
-    }
 }
