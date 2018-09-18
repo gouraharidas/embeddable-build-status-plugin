@@ -69,7 +69,6 @@ class StatusImage implements HttpResponse {
         URL image = new URL(
             Jenkins.getInstance().pluginManager.getPlugin(PLGIN_NAME).baseResourceURL,
             "status/"+fileName);
-        System.out.println("StatusImage:: url: " + image);
         InputStream s = image.openStream();
         try {
             payload = IOUtils.toByteArray(s);
@@ -92,7 +91,6 @@ class StatusImage implements HttpResponse {
 
 		URL image = new URL(Jenkins.getInstance().pluginManager.getPlugin(PLGIN_NAME).baseResourceURL,
 				"status/" + style + ".svg");
-		System.out.println("StatusImage:: url: " + image);
 		InputStream s = image.openStream();
 
 		double[] widths = { measureText(subject) + 10, measureText(status) + 10 };

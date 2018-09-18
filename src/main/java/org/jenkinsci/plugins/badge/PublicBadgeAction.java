@@ -89,7 +89,6 @@ public class PublicBadgeAction extends AbstractBadgeAction implements Unprotecte
      * Serves the badge image.
      */
     public HttpResponse doIcon(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job, @QueryParameter String build, @QueryParameter String style) {
-    	System.out.println("PublicBadgeAction:: doIcon...");
         if(build != null) {
             Run run = getRun(job, build);
             return iconResolver.getImage(run.getIconColor(), style);
