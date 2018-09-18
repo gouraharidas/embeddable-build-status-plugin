@@ -23,10 +23,10 @@
 */
 package org.jenkinsci.plugins.badge;
 
-import hudson.model.BallColor;
-
 import java.io.IOException;
 import java.util.HashMap;
+
+import hudson.model.BallColor;
 
 public class ImageResolver {
 
@@ -86,4 +86,57 @@ public class ImageResolver {
         }
     }
 
+	public StatusImage getCoverageImage(int coverage, String style) throws IOException {
+		String subject = "coverage";
+		String status = String.valueOf(coverage) + "%";
+		String color = "lightgrey";
+
+		if (coverage > 90) {
+			color = "brightgreen";
+		} else if (coverage > 80) {
+			color = "green";
+		} else if (coverage > 70) {
+			color = "yellowgreen";
+		} else if (coverage > 60) {
+			color = "yellow";
+		} else if (coverage > 50) {
+			color = "orange";
+		} else if (coverage >= 0) {
+			color = "red";
+		} else {
+			status = "unknown";
+		}
+
+		return new StatusImage(subject, status, color, style);
+	}
+
+	public StatusImage getXUnitImage(int passed, int failed, String style) throws IOException {
+		String subject = "unit tests";
+		String text = String.format("%d passed, %d failed", passed, failed);
+		String color = findTestBadgeColor(passed, failed);
+		return new StatusImage(subject, text, color, style);
+	}
+
+	private String findTestBadgeColor(int passed, int failed) {
+		int percentage = 0;
+		String color = "lightgrey";
+		if (passed > 0 || failed > 0) {
+			percentage = (int) (((double)passed / (passed + failed)) * 100);
+		}
+
+		if (percentage > 90) {
+			color = "brightgreen";
+		} else if (percentage > 80) {
+			color = "green";
+		} else if (percentage > 70) {
+			color = "yellowgreen";
+		} else if (percentage > 60) {
+			color = "yellow";
+		} else if (percentage > 50) {
+			color = "orange";
+		} else if (percentage >= 0) {
+			color = "red";
+		}
+		return color;
+	}
 }
