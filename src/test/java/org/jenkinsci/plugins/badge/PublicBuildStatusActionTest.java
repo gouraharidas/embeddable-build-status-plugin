@@ -45,7 +45,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 /**
  * @author Dominik Bartholdi (imod)
  */
-public class PublicBadgeActionTest {
+public class PublicBuildStatusActionTest {
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -58,16 +58,16 @@ public class PublicBadgeActionTest {
         wc.login("alice", "alice");
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=dummy");
+            wc.goTo("build-status/icon?job=dummy");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
         }
-        wc.goTo("buildStatus/icon?job=free", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free", "image/svg+xml");
         j.buildAndAssertSuccess(project);
-        wc.goTo("buildStatus/icon?job=free&build=1", "image/svg+xml");
-        wc.goTo("buildStatus/icon?job=free&build=1&style=plastic", "image/svg+xml");
-        wc.goTo("buildStatus/icon?job=free&build=1&style=unknown", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free&build=1", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free&build=1&style=plastic", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free&build=1&style=unknown", "image/svg+xml");
     }
 
     @PresetData(PresetData.DataSet.NO_ANONYMOUS_READACCESS)
@@ -77,7 +77,7 @@ public class PublicBadgeActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=dummy");
+            wc.goTo("build-status/icon?job=dummy");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
@@ -85,7 +85,7 @@ public class PublicBadgeActionTest {
 
         try {
             // try with correct job name
-            wc.goTo("buildStatus/icon?job=free", "image/svg+xml");
+            wc.goTo("build-status/icon?job=free", "image/svg+xml");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             // make sure return code does not leak security relevant information (must 404)
@@ -96,7 +96,7 @@ public class PublicBadgeActionTest {
 
         try {
             // try with correct job name
-            wc.goTo("buildStatus/icon?job=free&build=1", "image/svg+xml");
+            wc.goTo("build-status/icon?job=free&build=1", "image/svg+xml");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             // make sure return code does not leak security relevant information (must 404)
@@ -110,7 +110,7 @@ public class PublicBadgeActionTest {
         final SecurityRealm realm = j.createDummySecurityRealm();
         j.jenkins.setSecurityRealm(realm);
         GlobalMatrixAuthorizationStrategy auth = new GlobalMatrixAuthorizationStrategy();
-        auth.add(PublicBadgeAction.VIEW_STATUS, "anonymous");
+        auth.add(PublicBuildStatusAction.VIEW_STATUS, "anonymous");
         j.getInstance().setSecurityRealm(realm);
         j.getInstance().setAuthorizationStrategy(auth);
 
@@ -119,7 +119,7 @@ public class PublicBadgeActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=dummy");
+            wc.goTo("build-status/icon?job=dummy");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
@@ -127,15 +127,15 @@ public class PublicBadgeActionTest {
 
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=free&build=1");
+            wc.goTo("build-status/icon?job=free&build=1");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
         }
         
-        wc.goTo("buildStatus/icon?job=free", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free", "image/svg+xml");
         j.buildAndAssertSuccess(project);
-        wc.goTo("buildStatus/icon?job=free&build=1", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free&build=1", "image/svg+xml");
     }
 
     @PresetData(PresetData.DataSet.ANONYMOUS_READONLY)
@@ -145,7 +145,7 @@ public class PublicBadgeActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=dummy");
+            wc.goTo("build-status/icon?job=dummy");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
@@ -153,16 +153,16 @@ public class PublicBadgeActionTest {
 
         try {
             // try with wrong job name
-            wc.goTo("buildStatus/icon?job=free&build=1");
+            wc.goTo("build-status/icon?job=free&build=1");
             fail("should fail, because there is no job with this name");
         } catch (FailingHttpStatusCodeException x) {
             assertEquals(HttpURLConnection.HTTP_NOT_FOUND, x.getStatusCode());
         }
 
         // try with correct job name
-        wc.goTo("buildStatus/icon?job=free", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free", "image/svg+xml");
         j.buildAndAssertSuccess(project);
-        wc.goTo("buildStatus/icon?job=free&build=1", "image/svg+xml");
+        wc.goTo("build-status/icon?job=free&build=1", "image/svg+xml");
     }
 
     @Test
@@ -170,7 +170,7 @@ public class PublicBadgeActionTest {
         final FreeStyleProject project = j.createFreeStyleProject("free");
         JenkinsRule.WebClient wc = j.createWebClient();
 
-        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("buildStatus/text?job=free", "text/plain");
+        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("build-status/text?job=free", "text/plain");
         assertEquals(p.getContent(), "Not built");
     }
 
@@ -180,7 +180,7 @@ public class PublicBadgeActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
 
         project.makeDisabled(true);
-        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("buildStatus/text?job=free", "text/plain");
+        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("build-status/text?job=free", "text/plain");
         assertEquals(p.getContent(), "Disabled");
     }
 
@@ -190,7 +190,7 @@ public class PublicBadgeActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
 
         j.buildAndAssertSuccess(project);
-        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("buildStatus/text?job=free&build=1", "text/plain");
+        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("build-status/text?job=free&build=1", "text/plain");
         assertEquals(p.getContent(), "Success");
     }
 
@@ -203,7 +203,7 @@ public class PublicBadgeActionTest {
         project.getBuildersList().add(shell);
 
         Run r = project.scheduleBuild2(0).get();
-        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("buildStatus/text?job=free&build=1", "text/plain");
+        TextPage p = (com.gargoylesoftware.htmlunit.TextPage) wc.goTo("build-status/text?job=free&build=1", "text/plain");
         assertEquals(p.getContent(), "Failed");
     }
 }
