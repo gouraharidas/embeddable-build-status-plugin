@@ -37,8 +37,8 @@ l.layout {
         def badgeUrlWithoutView = jobUrlWithoutView + "/badge/icon"
         def textUrlWithView = jobUrlWithView + "badge/text"
         def textUrlWithoutView = jobUrlWithoutView + "/badge/text"
-        def publicBadge = "${app.rootUrl}buildStatus/icon?job=${fullJobName}";
-        def publicText = "${app.rootUrl}buildStatus/text?job=${fullJobName}";
+        def publicBadge = "${app.rootUrl}build-status/icon?job=${fullJobName}";
+        def publicText = "${app.rootUrl}build-status/text?job=${fullJobName}";
         def publicCoverageBadge = "${app.rootUrl}coverage/icon?job=${fullJobName}";
         def publicCoverageText = "${app.rootUrl}coverage/text?job=${fullJobName}";
         def publicXUnitBadge = "${app.rootUrl}unit-test/icon?job=${fullJobName}";

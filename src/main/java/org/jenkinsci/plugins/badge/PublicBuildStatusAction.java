@@ -23,28 +23,17 @@
  */
 package org.jenkinsci.plugins.badge;
 
-import hudson.Extension;
-import hudson.model.Item;
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.model.UnprotectedRootAction;
-import hudson.security.ACL;
-import hudson.security.Permission;
-import hudson.security.PermissionScope;
-import hudson.util.HttpResponses;
-
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.Run;
+import hudson.model.UnprotectedRootAction;
 
 /**
  * Exposes the build status badge via unprotected URL.
@@ -65,16 +54,16 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Dominik Bartholdi (imod)
  */
 @Extension
-public class PublicBadgeAction extends AbstractBadgeAction implements UnprotectedRootAction {
+public class PublicBuildStatusAction extends AbstractBadgeAction implements UnprotectedRootAction {
 
     private final ImageResolver iconResolver;
 
-    public PublicBadgeAction() throws IOException {
+    public PublicBuildStatusAction() throws IOException {
         iconResolver = new ImageResolver();
     }
 
     public String getUrlName() {
-        return "buildStatus";
+        return "build-status";
     }
 
     public String getIconFileName() {
@@ -88,13 +77,14 @@ public class PublicBadgeAction extends AbstractBadgeAction implements Unprotecte
     /**
      * Serves the badge image.
      */
-    public HttpResponse doIcon(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job, @QueryParameter String build, @QueryParameter String style) {
+    public HttpResponse doIcon(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job,
+    		@QueryParameter String build, @QueryParameter String style) throws IOException {
         if(build != null) {
             Run run = getRun(job, build);
-            return iconResolver.getImage(run.getIconColor(), style);
+            return iconResolver.getBuildStatusImage(run.getIconColor(), style);
         } else {
             Job<?, ?> project = getProject(job);
-            return iconResolver.getImage(project.getIconColor(), style);
+            return iconResolver.getBuildStatusImage(project.getIconColor(), style);
         }
     }
 

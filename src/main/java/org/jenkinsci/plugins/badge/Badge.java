@@ -20,21 +20,7 @@ import java.util.Map;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-/**
- * Status image as an {@link HttpResponse}, with proper cache handling.
- *
- * <p>
- * Originally we used 302 redirects to map the status URL to a proper permanent image URL,
- * but it turns out that some browsers cache 302 redirects in violation of RFC
- * (see http://code.google.com/p/chromium/issues/detail?id=103458)
- *
- * <p>
- * So this version directly serves the image at the status URL. Since the status
- * can change any time, we use ETag to skip the actual data transfer if possible.
- *
- * @author Kohsuke Kawaguchi
- */
-class StatusImage implements HttpResponse {
+class Badge implements HttpResponse {
     private final byte[] payload;
     private static final String PLGIN_NAME = "embeddable-build-status";
 
@@ -63,7 +49,7 @@ class StatusImage implements HttpResponse {
         };
     };
 
-    StatusImage(String fileName) throws IOException {
+    Badge(String fileName) throws IOException {
         etag = '"' + Jenkins.RESOURCE_PATH + '/' + fileName + '"';
 
         URL image = new URL(
@@ -78,15 +64,15 @@ class StatusImage implements HttpResponse {
         length = Integer.toString(payload.length);
     }
 
-	StatusImage(String subject, String status, String colorName) throws IOException {
+	Badge(String subject, String status, String colorName) throws IOException {
 		this(subject, status, colorName, null);
 	}
 
-	StatusImage(String subject, String status, String colorName, String style) throws IOException {
+	Badge(String subject, String status, String colorName, String style) throws IOException {
 		etag = Jenkins.RESOURCE_PATH + '/' + subject + status + colorName;
 
 		if (style == null) {
-			style = "flat";
+			style = "default";
 		}
 
 		URL image = new URL(Jenkins.getInstance().pluginManager.getPlugin(PLGIN_NAME).baseResourceURL,
@@ -148,5 +134,9 @@ class StatusImage implements HttpResponse {
         rsp.setHeader("Content-Type", "image/svg+xml;charset=utf-8");
         rsp.setHeader("Content-Length", length);
         rsp.getOutputStream().write(payload);
+    }
+
+    public byte[] getPayload() {
+    	return this.payload;
     }
 }

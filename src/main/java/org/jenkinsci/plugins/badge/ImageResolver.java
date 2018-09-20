@@ -24,76 +24,55 @@
 package org.jenkinsci.plugins.badge;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import hudson.model.BallColor;
 
 public class ImageResolver {
 
-    private final HashMap<String, StatusImage[]> styles;
-    private final StatusImage[] defaultStyle;
+    public Badge getBuildStatusImage(BallColor bc, String style) throws IOException {
+		String subject = "build";
+		String status = "unknown";
+		String color = "lightgrey";
 
-    public ImageResolver() throws IOException{
-        styles = new HashMap<String, StatusImage[]>();
-        // shields.io "plastic" style (aka the old default)
-        StatusImage[] plasticImages = new StatusImage[] {
-                new StatusImage("build-failing-red.svg"),
-                new StatusImage("build-unstable-yellow.svg"),
-                new StatusImage("build-passing-brightgreen.svg"),
-                new StatusImage("build-running-blue.svg"),
-                new StatusImage("build-aborted-lightgrey.svg"),
-                new StatusImage("build-unknown-lightgrey.svg")
-        };
-        styles.put("plastic", plasticImages);
-        // shields.io "flat" style (new default from Feb 1 2015)
-        StatusImage[] flatImages = new StatusImage[] {
-                new StatusImage("build-failing-red-flat.svg"),
-                new StatusImage("build-unstable-yellow-flat.svg"),
-                new StatusImage("build-passing-brightgreen-flat.svg"),
-                new StatusImage("build-running-blue-flat.svg"),
-                new StatusImage("build-aborted-lightgrey-flat.svg"),
-                new StatusImage("build-unknown-lightgrey-flat.svg")
-        };
-        styles.put("flat", flatImages);
-        // Pick a default style
-        defaultStyle = flatImages;
-        styles.put("default", defaultStyle);
-    }
-
-    public StatusImage getImage(BallColor color) {
-        return getImage(color, "default");
-    }
-
-    public StatusImage getImage(BallColor color, String style) {
-        StatusImage[] images = styles.get(style);
-        if (images == null)
-            images = defaultStyle;
-
-        if (color.isAnimated())
-            return images[3];
-
-        switch (color) {
-        case RED:
-            return images[0];
-        case YELLOW:
-            return images[1];
-        case BLUE:
-            return images[2];
-        case ABORTED:
-            return images[4];
-        default:
-            return images[5];
+        if (bc.isAnimated()) {
+            color = "blue";
+            status = "running";
+        } else {
+            switch (bc) {
+            case RED:
+                color = "red";
+                status = "failing";
+                break;
+            case YELLOW:
+                color = "yellow";
+                status = "unstable";
+                break;
+            case BLUE:
+                color = "brightgreen";
+                status = "passing";
+                break;
+            case ABORTED:
+                color = "lightgrey";
+                status = "aborted";
+                break;
+            default:
+                color = "lightgrey";
+                status = "unknown";
+                break;
+            }
         }
+
+        return new Badge(subject, status, color, style);
     }
 
-	public StatusImage getCoverageImage(int coverage) throws IOException {
+	public Badge getCoverageImage(int coverage, String style) throws IOException {
 		String subject = "coverage";
 		String status = String.valueOf(coverage) + "%";
 		String color = findBadgeColor(coverage);
-		return new StatusImage(subject, status, color);
+		return new Badge(subject, status, color, style);
 	}
 
-	public StatusImage getUnitTestImage(int passed, int failed) throws IOException {
+	public Badge getUnitTestImage(int passed, int failed, String style) throws IOException {
 		String subject = "unit tests";
 		String text = String.format("%d passed, %d failed", passed, failed);
 		String color = findTestBadgeColor(passed, failed);
@@ -108,7 +87,7 @@ public class ImageResolver {
 		}
 
 		String color = findBadgeColor(percentage);
-		return new StatusImage(subject, text, color);
+		return new Badge(subject, text, color, style);
 	}
 
 	private static String findBadgeColor(int percentage) {
