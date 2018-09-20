@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.badge;
 
-import java.awt.FontFormatException;
 import java.io.IOException;
 
 import org.kohsuke.stapler.HttpResponse;
@@ -43,14 +42,14 @@ public class PublicUnitTestAction extends AbstractBadgeAction implements Unprote
 	}
 
 	public HttpResponse doIcon(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job,
-			@QueryParameter String style) throws IOException, FontFormatException {
+			@QueryParameter String style) throws IOException {
 		Job<?, ?> project = getProject(job);
 		Run<?, ?> lastBuild = project.getLastBuild();
 		testAction = lastBuild.getAction(TestResultAction.class);
 		
 		int failed = testAction.getFailCount();
 		int passed = testAction.getTotalCount() - (failed + testAction.getSkipCount());
-		return iconResolver.getUnitTestImage(passed, failed);
+		return iconResolver.getUnitTestImage(passed, failed, style);
 	}
 
 }

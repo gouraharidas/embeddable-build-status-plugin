@@ -39,7 +39,7 @@ public class PluginImpl extends Plugin {
         //
         // As a work around, force loading of this permission so that by the time we start loading ACLs,
         // we have this instance already registered, thereby avoiding a lookup.
-        PublicBadgeAction.VIEW_STATUS.toString();
+        PublicBuildStatusAction.VIEW_STATUS.toString();
     }
 
 }
