@@ -86,7 +86,7 @@ class StatusImage implements HttpResponse {
 		etag = Jenkins.RESOURCE_PATH + '/' + subject + status + colorName;
 
 		if (style == null) {
-			style = "default";
+			style = "flat";
 		}
 
 		URL image = new URL(Jenkins.getInstance().pluginManager.getPlugin(PLGIN_NAME).baseResourceURL,
