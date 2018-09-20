@@ -48,9 +48,9 @@ public class PublicCoverageAction extends AbstractBadgeAction implements Unprote
 			@QueryParameter String style) throws IOException, FontFormatException {
 		Job<?, ?> project = getProject(job);
 		Run<?, ?> lastBuild = project.getLastBuild();
-        coberturaAction = lastBuild.getAction( hudson.plugins.cobertura.CoberturaBuildAction.class);
-        int coverage = coberturaAction.getResult().getCoverage( CoverageMetric.LINE ).getPercentage();
-		return iconResolver.getCoverageImage(coverage, style);
+        coberturaAction = lastBuild.getAction(CoberturaBuildAction.class);
+        int coverage = coberturaAction.getResult().getCoverage(CoverageMetric.LINE).getPercentage();
+		return iconResolver.getCoverageImage(coverage);
 	}
 
 }
