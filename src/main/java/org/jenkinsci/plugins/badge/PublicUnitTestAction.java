@@ -53,7 +53,7 @@ public class PublicUnitTestAction extends AbstractBadgeAction implements Unprote
 		int failed = testAction.getFailCount();
 		int skipped = testAction.getSkipCount();
 		int passed = total - (failed + skipped);
-		return iconResolver.getXUnitImage(passed, failed, style);
+		return iconResolver.getUnitTestImage(passed, failed);
 	}
 
 }

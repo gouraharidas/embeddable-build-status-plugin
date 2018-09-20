@@ -31,7 +31,6 @@ public class WorkflowBadgeActionTest {
 
     @PresetData(PresetData.DataSet.NO_ANONYMOUS_READACCESS)
     @Test
-    @Ignore
     public void authenticatedAccess() throws Exception {
         WorkflowJob job = j.getInstance().createProject(WorkflowJob.class, "wf");
         job.setDefinition(new CpsFlowDefinition("println('hello')"));
@@ -47,7 +46,6 @@ public class WorkflowBadgeActionTest {
     }
 
     @Test
-    @Ignore
     public void anonymousViewStatusAccess() throws Exception {
         // Allows anonymous access at security realm level
         final SecurityRealm realm = j.createDummySecurityRealm();
@@ -85,12 +83,12 @@ public class WorkflowBadgeActionTest {
 
     @PresetData(PresetData.DataSet.ANONYMOUS_READONLY)
     @Test
-    public void anonymousReadXUnit() throws Exception {
+    public void anonymousReadUnitTestReport() throws Exception {
         WorkflowJob job = j.getInstance().createProject(WorkflowJob.class, "wf");
         job.setDefinition(new CpsFlowDefinition("println('hello')"));
         JenkinsRule.WebClient wc = j.createWebClient();
-        WebResponse response = wc.goTo("xunit-test/icon?job=wf&", "image/svg+xml").getWebResponse();
-        saveImage(response, "xunit-icon");
+        WebResponse response = wc.goTo("unit-test/icon?job=wf&", "image/svg+xml").getWebResponse();
+        saveImage(response, "unit-icon");
     }
 
     private void saveImage(WebResponse response, String name) throws Exception {
