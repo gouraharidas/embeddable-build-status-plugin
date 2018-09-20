@@ -86,7 +86,7 @@ public class ImageResolver {
         }
     }
 
-	public StatusImage getCoverageImage(int coverage, String style) throws IOException {
+	public StatusImage getCoverageImage(int coverage) throws IOException {
 		String subject = "coverage";
 		String status = String.valueOf(coverage) + "%";
 		String color = "lightgrey";
@@ -107,14 +107,14 @@ public class ImageResolver {
 			status = "unknown";
 		}
 
-		return new StatusImage(subject, status, color, style);
+		return new StatusImage(subject, status, color);
 	}
 
-	public StatusImage getXUnitImage(int passed, int failed, String style) throws IOException {
+	public StatusImage getXUnitImage(int passed, int failed) throws IOException {
 		String subject = "unit tests";
 		String text = String.format("%d passed, %d failed", passed, failed);
 		String color = findTestBadgeColor(passed, failed);
-		return new StatusImage(subject, text, color, style);
+		return new StatusImage(subject, text, color);
 	}
 
 	private String findTestBadgeColor(int passed, int failed) {
