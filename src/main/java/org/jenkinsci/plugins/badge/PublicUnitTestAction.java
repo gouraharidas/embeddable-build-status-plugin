@@ -48,11 +48,8 @@ public class PublicUnitTestAction extends AbstractBadgeAction implements Unprote
 		Run<?, ?> lastBuild = project.getLastBuild();
 		testAction = lastBuild.getAction(TestResultAction.class);
 		
-		//int coverage = coverageStatus.getCoverage(project);
-		int total = testAction.getTotalCount();
 		int failed = testAction.getFailCount();
-		int skipped = testAction.getSkipCount();
-		int passed = total - (failed + skipped);
+		int passed = testAction.getTotalCount() - (failed + testAction.getSkipCount());
 		return iconResolver.getUnitTestImage(passed, failed);
 	}
 
