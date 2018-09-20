@@ -85,12 +85,12 @@ public class WorkflowBadgeActionTest {
 
     @PresetData(PresetData.DataSet.ANONYMOUS_READONLY)
     @Test
-    public void anonymousReadXUnit() throws Exception {
+    public void anonymousReadUnitTestReport() throws Exception {
         WorkflowJob job = j.getInstance().createProject(WorkflowJob.class, "wf");
         job.setDefinition(new CpsFlowDefinition("println('hello')"));
         JenkinsRule.WebClient wc = j.createWebClient();
-        WebResponse response = wc.goTo("xunit-test/icon?job=wf&", "image/svg+xml").getWebResponse();
-        saveImage(response, "xunit-icon");
+        WebResponse response = wc.goTo("unit-test/icon?job=wf&", "image/svg+xml").getWebResponse();
+        saveImage(response, "unit-icon");
     }
 
     private void saveImage(WebResponse response, String name) throws Exception {

@@ -89,41 +89,26 @@ public class ImageResolver {
 	public StatusImage getCoverageImage(int coverage) throws IOException {
 		String subject = "coverage";
 		String status = String.valueOf(coverage) + "%";
-		String color = "lightgrey";
-
-		if (coverage > 90) {
-			color = "brightgreen";
-		} else if (coverage > 80) {
-			color = "green";
-		} else if (coverage > 70) {
-			color = "yellowgreen";
-		} else if (coverage > 60) {
-			color = "yellow";
-		} else if (coverage > 50) {
-			color = "orange";
-		} else if (coverage >= 0) {
-			color = "red";
-		} else {
-			status = "unknown";
-		}
+		String color = findBadgeColor(coverage);
 
 		return new StatusImage(subject, status, color);
 	}
 
-	public StatusImage getXUnitImage(int passed, int failed) throws IOException {
+	public StatusImage getUnitTestImage(int passed, int failed) throws IOException {
 		String subject = "unit tests";
 		String text = String.format("%d passed, %d failed", passed, failed);
-		String color = findTestBadgeColor(passed, failed);
-		return new StatusImage(subject, text, color);
-	}
-
-	private String findTestBadgeColor(int passed, int failed) {
 		int percentage = 0;
-		String color = "lightgrey";
+		
 		if (passed > 0 || failed > 0) {
 			percentage = (int) (((double)passed / (passed + failed)) * 100);
 		}
 
+		String color = findBadgeColor(percentage);
+		return new StatusImage(subject, text, color);
+	}
+
+	private static String findBadgeColor(int percentage) {
+		String color = "lightgrey";
 		if (percentage > 90) {
 			color = "brightgreen";
 		} else if (percentage > 80) {
