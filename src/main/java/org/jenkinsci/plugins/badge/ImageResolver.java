@@ -29,34 +29,38 @@ import hudson.model.BallColor;
 
 public class ImageResolver {
 
-    public Badge getBuildStatusImage(BallColor bc, String style) throws IOException {
+	private static final String COVERAGE_SUBJECT = "coverage";
+	private static final String UNIT_TEST_SUBJECT = "unit tests";
+	private static final String UNAVAILABLE = "not available";
+
+	public static Badge getBuildStatusImage(BallColor bc, String style) throws IOException {
 		String subject = "build";
 		String status = "unknown";
-		String color = "lightgrey";
+		Color color = Color.lightgrey;
 
         if (bc.isAnimated()) {
-            color = "blue";
+            color = Color.blue;
             status = "running";
         } else {
             switch (bc) {
             case RED:
-                color = "red";
+                color = Color.red;
                 status = "failing";
                 break;
             case YELLOW:
-                color = "yellow";
+                color = Color.yellow;
                 status = "unstable";
                 break;
             case BLUE:
-                color = "brightgreen";
+                color = Color.brightgreen;
                 status = "passing";
                 break;
             case ABORTED:
-                color = "lightgrey";
+                color = Color.lightgrey;
                 status = "aborted";
                 break;
             default:
-                color = "lightgrey";
+                color = Color.lightgrey;
                 status = "unknown";
                 break;
             }
@@ -65,21 +69,25 @@ public class ImageResolver {
         return new Badge(subject, status, color, style);
     }
 
-	public Badge getCoverageImage(int coverage, String style) throws IOException {
-		String subject = "coverage";
+	public static Badge getCoverageImage(int coverage, String style) throws IOException {
 		String status = String.valueOf(coverage) + "%";
-		String color = findBadgeColor(coverage);
-		return new Badge(subject, status, color, style);
+		return new Badge(COVERAGE_SUBJECT, status, findBadgeColor(coverage), style);
 	}
 
-	public Badge getUnitTestImage(int passed, int failed, String style) throws IOException {
-		String subject = "unit tests";
+	public static Badge getCoverageImageUnavailable(String style) throws IOException {
+		return new Badge(COVERAGE_SUBJECT, UNAVAILABLE, Color.lightgrey, style);
+	}
+
+	public static Badge getUnitTestImage(int passed, int failed, String style) throws IOException {
 		String text = String.format("%d passed, %d failed", passed, failed);
-		String color = findTestBadgeColor(passed, failed);
-		return new Badge(subject, text, color, style);
+		return new Badge(UNIT_TEST_SUBJECT, text, findTestBadgeColor(passed, failed), style);
 	}
 
-	private String findTestBadgeColor(int passed, int failed) {
+	public static Badge getUnitTestImageUnavailable(String style) throws IOException {
+		return new Badge(UNIT_TEST_SUBJECT, UNAVAILABLE, Color.lightgrey, style);
+	}
+
+	private static Color findTestBadgeColor(int passed, int failed) {
 		int percentage = 0;
 		
 		if (passed > 0 || failed > 0) {
@@ -89,20 +97,20 @@ public class ImageResolver {
 		return findBadgeColor(percentage);
 	}
 
-	private static String findBadgeColor(int percentage) {
-		String color = "lightgrey";
+	private static Color findBadgeColor(int percentage) {
+		Color color = Color.lightgrey;
 		if (percentage > 90) {
-			color = "brightgreen";
+			color = Color.brightgreen;
 		} else if (percentage > 80) {
-			color = "green";
+			color = Color.green;
 		} else if (percentage > 70) {
-			color = "yellowgreen";
+			color = Color.yellowgreen;
 		} else if (percentage > 60) {
-			color = "yellow";
+			color = Color.yellow;
 		} else if (percentage > 50) {
-			color = "orange";
+			color = Color.orange;
 		} else if (percentage >= 0) {
-			color = "red";
+			color = Color.red;
 		}
 		return color;
 	}
