@@ -76,7 +76,7 @@ public class ImageResolver {
 		String subject = "unit tests";
 		String text = String.format("%d passed, %d failed", passed, failed);
 		String color = findTestBadgeColor(passed, failed);
-		return new StatusImage(subject, text, color);
+		return new Badge(subject, text, color, style);
 	}
 
 	private String findTestBadgeColor(int passed, int failed) {
@@ -86,8 +86,7 @@ public class ImageResolver {
 			percentage = (int) (((double)passed / (passed + failed)) * 100);
 		}
 
-		String color = findBadgeColor(percentage);
-		return new Badge(subject, text, color, style);
+		return findBadgeColor(percentage);
 	}
 
 	private static String findBadgeColor(int percentage) {
