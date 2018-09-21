@@ -56,12 +56,6 @@ import hudson.model.UnprotectedRootAction;
 @Extension
 public class PublicBuildStatusAction extends AbstractBadgeAction implements UnprotectedRootAction {
 
-    private final ImageResolver iconResolver;
-
-    public PublicBuildStatusAction() throws IOException {
-        iconResolver = new ImageResolver();
-    }
-
     public String getUrlName() {
         return "build-status";
     }
@@ -81,10 +75,10 @@ public class PublicBuildStatusAction extends AbstractBadgeAction implements Unpr
     		@QueryParameter String build, @QueryParameter String style) throws IOException {
         if(build != null) {
             Run run = getRun(job, build);
-            return iconResolver.getBuildStatusImage(run.getIconColor(), style);
+            return ImageResolver.getBuildStatusImage(run.getIconColor(), style);
         } else {
             Job<?, ?> project = getProject(job);
-            return iconResolver.getBuildStatusImage(project.getIconColor(), style);
+            return ImageResolver.getBuildStatusImage(project.getIconColor(), style);
         }
     }
 
