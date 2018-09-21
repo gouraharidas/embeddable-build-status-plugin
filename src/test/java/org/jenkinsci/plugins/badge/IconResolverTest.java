@@ -26,8 +26,6 @@ public class IconResolverTest {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-    public ImageResolver resolver = new ImageResolver();
-
     @Before
     public void beforeTest() throws Exception {
         WorkflowJob job = j.getInstance().createProject(WorkflowJob.class, "wf");
@@ -36,98 +34,122 @@ public class IconResolverTest {
 
     @Test
     public void testBuildStatusRunningFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.BLUE, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.BLUE, "flat");
     	saveImage(badge, "status-running-flat");
     }
 
     @Test
     public void testBuildStatusRunning3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.BLUE, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.BLUE, null);
     	saveImage(badge, "status-running-3d");
     }
 
     @Test
     public void testBuildStatusUnstableFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.YELLOW, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.YELLOW, "flat");
     	saveImage(badge, "status-unstable-flat");
     }
 
     @Test
     public void testBuildStatusUnstable3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.YELLOW, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.YELLOW, null);
     	saveImage(badge, "status-unstable-3d");
     }
 
     @Test
     public void testBuildStatusFailingFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.RED, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.RED, "flat");
     	saveImage(badge, "status-failing-flat");
     }
 
     @Test
     public void testBuildStatusFailing3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.RED, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.RED, null);
     	saveImage(badge, "status-failing-3d");
     }
 
     @Test
     public void testBuildStatusAbortedFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.ABORTED, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.ABORTED, "flat");
     	saveImage(badge, "status-aborted-flat");
     }
 
     @Test
     public void testBuildStatusAborted3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.ABORTED, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.ABORTED, null);
     	saveImage(badge, "status-aborted-3d");
     }
 
     @Test
     public void testBuildStatusAnimatedFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.ABORTED_ANIME, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.ABORTED_ANIME, "flat");
     	saveImage(badge, "status-animated-flat");
     }
 
     @Test
     public void testBuildStatusAnimated3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.ABORTED_ANIME, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.ABORTED_ANIME, null);
     	saveImage(badge, "status-animated-3d");
     }
 
     @Test
     public void testBuildStatusDisabledFlat() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.DISABLED, "flat");
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.DISABLED, "flat");
     	saveImage(badge, "status-disabled-flat");
     }
 
     @Test
     public void testBuildStatusDisabled3D() throws Exception {
-    	Badge badge = resolver.getBuildStatusImage(BallColor.DISABLED, null);
+    	Badge badge = ImageResolver.getBuildStatusImage(BallColor.DISABLED, null);
     	saveImage(badge, "status-disabled-3d");
     }
 
     @Test
     public void testCogerateFlat() throws Exception {
-    	Badge badge = resolver.getCoverageImage(random(1, 100), "flat");
+    	Badge badge = ImageResolver.getCoverageImage(random(1, 100), "flat");
     	saveImage(badge, "coverage-flat");
     }
 
     @Test
     public void testCogerate3D() throws Exception {
-    	Badge badge = resolver.getCoverageImage(random(1, 100), null);
+    	Badge badge = ImageResolver.getCoverageImage(random(1, 100), null);
     	saveImage(badge, "coverage-3d");
     }
 
     @Test
+    public void testCogerateUnavailableFlat() throws Exception {
+    	Badge badge = ImageResolver.getCoverageImageUnavailable("flat");
+    	saveImage(badge, "coverage-unavailable-flat");
+    }
+
+    @Test
+    public void testCogerateUnavailable3D() throws Exception {
+    	Badge badge = ImageResolver.getCoverageImageUnavailable(null);
+    	saveImage(badge, "coverage-unavailable-3d");
+    }
+
+    @Test
     public void testUnitTestFlat() throws Exception {
-    	Badge badge = resolver.getUnitTestImage(random(10, 20), random(60, 70), "flat");
+    	Badge badge = ImageResolver.getUnitTestImage(random(10, 20), random(60, 70), "flat");
     	saveImage(badge, "unit-test-failure-flat");
     }
 
     @Test
     public void testUnitTest3D() throws Exception {
-    	Badge badge = resolver.getUnitTestImage(random(300, 350), random(2, 3), null);
+    	Badge badge = ImageResolver.getUnitTestImage(random(300, 350), random(2, 3), null);
     	saveImage(badge, "unit-test-success-3d");
+    }
+
+    @Test
+    public void testUnitTestUnavailableFlat() throws Exception {
+    	Badge badge = ImageResolver.getUnitTestImageUnavailable("flat");
+    	saveImage(badge, "unit-test-unavailable-flat");
+    }
+
+    @Test
+    public void testUnitTestUnavailable3D() throws Exception {
+    	Badge badge = ImageResolver.getUnitTestImageUnavailable(null);
+    	saveImage(badge, "unit-test-unavailable-3d");
     }
 
     private static void saveImage(Badge badge, String name) throws Exception {

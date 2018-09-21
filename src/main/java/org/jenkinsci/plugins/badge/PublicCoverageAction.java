@@ -20,14 +20,6 @@ import hudson.plugins.cobertura.targets.CoverageMetric;
  */
 @Extension
 public class PublicCoverageAction extends AbstractBadgeAction implements UnprotectedRootAction {
-	private final ImageResolver iconResolver;
-
-	private CoberturaBuildAction coberturaAction = null;
-
-	public PublicCoverageAction() throws IOException {
-		iconResolver = new ImageResolver();
-	}
-
 	@Override
 	public String getUrlName() {
 		return "coverage";
@@ -47,9 +39,19 @@ public class PublicCoverageAction extends AbstractBadgeAction implements Unprote
 			@QueryParameter String style) throws IOException {
 		Job<?, ?> project = getProject(job);
 		Run<?, ?> lastBuild = project.getLastBuild();
-        coberturaAction = lastBuild.getAction(CoberturaBuildAction.class);
-        int coverage = coberturaAction.getResult().getCoverage(CoverageMetric.LINE).getPercentage();
-		return iconResolver.getCoverageImage(coverage, style);
+		Boolean available = Boolean.TRUE;
+		int coverage = 0;
+		if (null != lastBuild) {
+			CoberturaBuildAction coberturaAction = lastBuild.getAction(CoberturaBuildAction.class);
+			if (null != coberturaAction) {
+				coverage = coberturaAction.getResult().getCoverage(CoverageMetric.LINE).getPercentage();
+			} else {
+				available = Boolean.FALSE;
+			}
+		} else {
+			available = Boolean.FALSE;
+		}
+		return available? ImageResolver.getCoverageImage(coverage, style) : ImageResolver.getCoverageImageUnavailable(style);
 	}
 
 }

@@ -19,13 +19,6 @@ import hudson.tasks.junit.TestResultAction;
  */
 @Extension
 public class PublicUnitTestAction extends AbstractBadgeAction implements UnprotectedRootAction {
-	private final ImageResolver iconResolver;
-	private TestResultAction testAction;
-
-	public PublicUnitTestAction() throws IOException {
-		iconResolver = new ImageResolver();
-	}
-
 	@Override
 	public String getUrlName() {
 		return "unit-test";
@@ -45,11 +38,21 @@ public class PublicUnitTestAction extends AbstractBadgeAction implements Unprote
 			@QueryParameter String style) throws IOException {
 		Job<?, ?> project = getProject(job);
 		Run<?, ?> lastBuild = project.getLastBuild();
-		testAction = lastBuild.getAction(TestResultAction.class);
-		
-		int failed = testAction.getFailCount();
-		int passed = testAction.getTotalCount() - (failed + testAction.getSkipCount());
-		return iconResolver.getUnitTestImage(passed, failed, style);
+		Boolean available = Boolean.TRUE;
+		int passed = 0, failed = 0;
+		if (null != lastBuild) {
+			TestResultAction testAction = lastBuild.getAction(TestResultAction.class);
+			if (null != testAction) {
+				failed = testAction.getFailCount();
+				passed = testAction.getTotalCount() - (failed + testAction.getSkipCount());
+			} else {
+				available = Boolean.FALSE;
+			}
+		} else {
+			available = Boolean.FALSE;
+		}
+		return available ? ImageResolver.getUnitTestImage(passed, failed, style)
+				: ImageResolver.getUnitTestImageUnavailable(style);
 	}
 
 }

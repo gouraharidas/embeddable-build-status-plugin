@@ -1,12 +1,6 @@
 package org.jenkinsci.plugins.badge;
 
-import hudson.util.IOUtils;
-import jenkins.model.Jenkins;
-import org.kohsuke.stapler.HttpResponse;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import javax.servlet.ServletException;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 
 import java.awt.Canvas;
 import java.awt.Font;
@@ -15,10 +9,15 @@ import java.awt.FontMetrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
-import static javax.servlet.http.HttpServletResponse.*;
+import javax.servlet.ServletException;
+
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import hudson.util.IOUtils;
+import jenkins.model.Jenkins;
 
 class Badge implements HttpResponse {
     private final byte[] payload;
@@ -33,21 +32,6 @@ class Badge implements HttpResponse {
     private final String etag;
 
     private final String length;
-
-    private final Map<String, String> colors = new HashMap<String, String>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put( "red", "#e05d44" );
-            put( "brightgreen", "#44cc11" );
-            put( "green", "#97CA00" );
-            put( "yellowgreen", "#a4a61d" );
-            put( "yellow", "#dfb317" );
-            put( "orange", "#fe7d37" );
-            put( "lightgrey", "#9f9f9f" );
-            put( "blue", "#007ec6" );
-        };
-    };
 
     Badge(String fileName) throws IOException {
         etag = '"' + Jenkins.RESOURCE_PATH + '/' + fileName + '"';
@@ -64,12 +48,12 @@ class Badge implements HttpResponse {
         length = Integer.toString(payload.length);
     }
 
-	Badge(String subject, String status, String colorName) throws IOException {
-		this(subject, status, colorName, null);
+	Badge(String subject, String status, Color color) throws IOException {
+		this(subject, status, color, null);
 	}
 
-	Badge(String subject, String status, String colorName, String style) throws IOException {
-		etag = Jenkins.RESOURCE_PATH + '/' + subject + status + colorName;
+	Badge(String subject, String status, Color color, String style) throws IOException {
+		etag = Jenkins.RESOURCE_PATH + '/' + subject + status + color.name();
 
 		if (style == null) {
 			style = "default";
@@ -81,12 +65,6 @@ class Badge implements HttpResponse {
 
 		double[] widths = { measureText(subject) + 10, measureText(status) + 10 };
 
-		String color = colors.get(colorName);
-
-		if (color == null) {
-			color = '#' + colorName;
-		}
-
 		String fullwidth = String.valueOf(widths[0] + widths[1]);
 		String blockPos = String.valueOf(widths[0]);
 		String blockWidth = String.valueOf(widths[1]);
@@ -97,7 +75,7 @@ class Badge implements HttpResponse {
 			payload = IOUtils.toString(s, "utf-8").replace("{{fullwidth}}", fullwidth).replace("{{blockPos}}", blockPos)
 					.replace("{{blockWidth}}", blockWidth).replace("{{subjectPos}}", subjectPos)
 					.replace("{{statusPos}}", statusPos).replace("{{subject}}", subject).replace("{{status}}", status)
-					.replace("{{color}}", color).getBytes();
+					.replace("{{color}}", color.code()).getBytes();
 		} finally {
 			IOUtils.closeQuietly(s);
 		}
