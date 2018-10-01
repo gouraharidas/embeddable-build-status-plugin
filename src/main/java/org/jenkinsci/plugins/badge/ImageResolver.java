@@ -29,7 +29,7 @@ import hudson.model.BallColor;
 
 public class ImageResolver {
 
-	private static final String COVERAGE_SUBJECT = "coverage";
+	private static final String COVERAGE_SUBJECT = "line coverage";
 	private static final String UNIT_TEST_SUBJECT = "unit tests";
 	private static final String UNAVAILABLE = "not available";
 
