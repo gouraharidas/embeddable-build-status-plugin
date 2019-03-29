@@ -94,7 +94,7 @@ public class ImageResolver {
     }
 
     public static Badge getKPIImageAvailable(String style) throws IOException {
-        return new Badge(KPI_SUBJECT, AVAILABLE, Color.green, style);
+        return new Badge(KPI_SUBJECT, AVAILABLE, Color.brightgreen, style);
     }
 
     private static Color findTestBadgeColor(int passed, int failed) {
